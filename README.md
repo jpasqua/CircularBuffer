@@ -1,3 +1,15 @@
+### Purpose of this fork
+
+This is a fork of the [CircularBuffer](https://github.com/rlogiacco/CircularBuffer) class by [https://github.com/rlogiacco](https://github.com/rlogiacco). It has one minor tweak and one addition aimed primaily at avoiding object copies:
+
+1. In the original class, the `push` and `unshift` functions accept a parameter by value.
+	* This works well for fundamental types (e.g. `unsigned long`), but can result in an extra copy for more complex types. This may have an adverse impact on performance or the heap depending on the type.
+	* To address this, by default those functions now accept the parameter by reference.
+	* You can choose how these parameters are passed by defining either the `ARG_TYPE_VAL` or `ARG_TYPE_REF` **BEFORE** the `#include` directive for `CircularBuffer.h`.
+	* It is recommended that you test with the different options in your use case to determine which works best.
+2. There is a new function called `peekAt` which accepts an index and returns a `const& T` corresponding to the element at that index. This is very similar to `operator []`, but returns a reference rather than a copy.
+
+
 ### &#x26A0; **IMPORTANT**
  
 > Please, before submitting a support request read carefully this README and check if an answer already exists among [previously answered questions](https://github.com/rlogiacco/CircularBuffer/discussions): do not abuse of the Github issue tracker.

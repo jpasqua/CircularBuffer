@@ -22,7 +22,7 @@ constexpr CircularBuffer<T,S,IT>::CircularBuffer() :
 }
 
 template<typename T, size_t S, typename IT>
-bool CircularBuffer<T,S,IT>::unshift(T value) {
+bool CircularBuffer<T,S,IT>::unshift(choose_arg_type<T> value) {
 	if (head == buffer) {
 		head = buffer + capacity;
 	}
@@ -41,7 +41,7 @@ bool CircularBuffer<T,S,IT>::unshift(T value) {
 }
 
 template<typename T, size_t S, typename IT>
-bool CircularBuffer<T,S,IT>::push(T value) {
+bool CircularBuffer<T,S,IT>::push(choose_arg_type<T> value) {
 	if (++tail == buffer + capacity) {
 		tail = buffer;
 	}
@@ -95,6 +95,12 @@ template<typename T, size_t S, typename IT>
 T CircularBuffer<T,S,IT>::operator [](IT index) const {
 	if (index >= count) return *tail;
 	return *(buffer + ((head - buffer + index) % capacity));
+}
+
+template<typename T, size_t S, typename IT>
+const T& CircularBuffer<T,S,IT>::peekAt(IT index) const {
+	if (index >= count) return *tail;
+	return (buffer[(head - buffer + index) % capacity]);
 }
 
 template<typename T, size_t S, typename IT>

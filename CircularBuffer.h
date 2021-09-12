@@ -38,6 +38,25 @@ namespace Helper {
 	};
 }
 
+
+/**
+ * For the push() and unshift() functions, you may choose whether to pass-by-value, pass-by-reference,
+ * or have the template choose at compile time base on the element type. This is the default and in this case
+ * we pass-by-value for fundamental types and pass-by-reference otherwise. To always use pass-by-value, which
+ * is what the original library did, #define ARG_TYPE_VAL *before* including CircularBuffer.h. To always
+ * use pass-by-reference #define ARG_TYPE_REF. Don't define either to get the default behavior.
+ */
+#include <type_traits>
+template<typename T>
+#if defined(ARG_TYPE_REF)
+	using choose_arg_type = typename std::conditional<false, T, const T &>::type;
+#elif defined(ARG_TYPE_VAL)
+	using choose_arg_type = typename std::conditional<true, T, const T &>::type;
+#else
+	using choose_arg_type = typename std::conditional<std::is_fundamental<T>::value, T, const T &>::type;
+#endif
+
+
 template<typename T, size_t S, typename IT = typename Helper::Index<(S <= UINT8_MAX), (S <= UINT16_MAX)>::Type> class CircularBuffer {
 public:
 	/**
@@ -67,12 +86,12 @@ public:
 	/**
 	 * Adds an element to the beginning of buffer: the operation returns `false` if the addition caused overwriting an existing element.
 	 */
-	bool unshift(T value);
+	bool unshift(choose_arg_type<T> value);
 
 	/**
 	 * Adds an element to the end of buffer: the operation returns `false` if the addition caused overwriting an existing element.
 	 */
-	bool push(T value);
+	bool push(choose_arg_type<T> value);
 
 	/**
 	 * Removes an element from the beginning of the buffer.
@@ -102,6 +121,14 @@ public:
 	 * *WARNING* Calling this operation on an empty buffer has an unpredictable behaviour.
 	 */
 	T operator [] (IT index) const;
+
+	/**
+	 * Similar to operator [], but returns a const ref to the stored element rather than a copy.
+	 * Similar to std::vector::at, but always returns a const reference. 
+	 * Calling this operation using and index value greater than `size - 1` returns the tail element.
+	 * *WARNING* Calling this operation on an empty buffer has an unpredictable behaviour.
+	 */
+	const T& peekAt(IT index) const;
 
 	/**
 	 * Returns how many elements are actually stored in the buffer.
