@@ -48,12 +48,12 @@ namespace Helper {
  */
 #include <type_traits>
 template<typename T>
-#if defined(ARG_TYPE_REF)
-	using choose_arg_type = typename std::conditional<false, T, const T &>::type;
-#elif defined(ARG_TYPE_VAL)
-	using choose_arg_type = typename std::conditional<true, T, const T &>::type;
+#if defined(ARG_TYPE_VAL)
+	using choose_arg_type = T;
+#elif defined(ARG_TYPE_REF)
+	using choose_arg_type = const T &;
 #else
-	using choose_arg_type = typename std::conditional<std::is_fundamental<T>::value, T, const T &>::type;
+	using choose_arg_type = typename std::conditional<std::is_fundamental<T>::value, T,  const T&>::type;
 #endif
 
 
