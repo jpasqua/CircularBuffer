@@ -41,7 +41,7 @@ namespace Helper {
 
 /**
  * For the push() and unshift() functions, you may choose whether to pass-by-value, pass-by-reference,
- * or have the template choose at compile time base on the element type. This is the default and in this case
+ * or have the template choose at compile time based on the element type. This is the default and in this case
  * we pass-by-value for fundamental types and pass-by-reference otherwise. To always use pass-by-value, which
  * is what the original library did, #define ARG_TYPE_VAL *before* including CircularBuffer.h. To always
  * use pass-by-reference #define ARG_TYPE_REF. Don't define either to get the default behavior.
